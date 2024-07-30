@@ -11,7 +11,9 @@ edition = "2018"
 
 [output.html]
 smart-punctuation = true
-no-section-label = true  # hide numbers
+no-section-label = true                    # hide numbers
+additional-css = ["theme/css/pagetoc.css"]
+additional-js = ["theme/js/pagetoc.js"]
 # mathjax-support = true
 # site-url = "/mdBook/"
 # git-repository-url = "https://github.com/rust-lang/mdBook/tree/master/guide"
