@@ -14,10 +14,8 @@ smart-punctuation = true
 no-section-label = true                    # hide numbers
 additional-css = ["theme/css/pagetoc.css"]
 additional-js = ["theme/js/pagetoc.js"]
-# mathjax-support = true
-# site-url = "/mdBook/"
-# git-repository-url = "https://github.com/rust-lang/mdBook/tree/master/guide"
-# edit-url-template = "https://github.com/rust-lang/mdBook/edit/master/guide/{path}"
+cname = ["tnips.telcoin.network"]
+git-repository-url = "https://github.com/telcoin-association/TNIPs/"
 
 [output.html.playground]
 editable = true

@@ -2,6 +2,8 @@
 
 The goal for TNIPs is to standardize and provide high-quality documentation for Telcoin Network itself and conventions built upon it. This repository tracks past and ongoing improvements to Telcoin Network in the form of Telcoin Network Improvement Proposals (TNIPs). [TNIP-1](https://tnips.telcoin.network/TNIPS/tnip-1) governs how TNIPs are published.
 
+Telcoin Network is still under heavy development. The proposals outlined here guide and document the progress towards mainnet.
+
 The [status page](https://tnips.telcoin.network/) tracks and lists TNIPs, which can be divided into the following categories:
 
 **Before you write a TNIP, ideas MUST be thoroughly discussed on [Telcoin Network Forum](https://forum.telcoin.org/). Once consensus is reached in the community, thoroughly read and review [TNIP-1](https://tnips.telcoin.network/TNIPS/tnip-1), which describes the TNIP process.**
