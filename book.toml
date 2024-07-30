@@ -1,0 +1,22 @@
+[book]
+authors = ["grantkee", "telcoin association"]
+language = "en"
+multilingual = false
+src = "src"
+title = "telcoin network improvement proposals"
+description = "Collection of community-driven proposals to improve Telcoin Network protocol."
+
+[rust]
+edition = "2018"
+
+[output.html]
+smart-punctuation = true
+no-section-label = true  # hide numbers
+# mathjax-support = true
+# site-url = "/mdBook/"
+# git-repository-url = "https://github.com/rust-lang/mdBook/tree/master/guide"
+# edit-url-template = "https://github.com/rust-lang/mdBook/edit/master/guide/{path}"
+
+[output.html.playground]
+editable = true
+line-numbers = true
