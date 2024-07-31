@@ -11,10 +11,11 @@ edition = "2018"
 
 [output.html]
 smart-punctuation = true
-no-section-label = true                    # hide numbers
+# hide numbers
+no-section-label = true
 additional-css = ["theme/css/pagetoc.css"]
 additional-js = ["theme/js/pagetoc.js"]
-cname = ["tnips.telcoin.network"]
+cname = "tnips.telcoin.network"
 git-repository-url = "https://github.com/telcoin-association/TNIPs/"
 
 [output.html.playground]
