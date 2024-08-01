@@ -18,6 +18,7 @@ use-default-preprocessors = true
 [preprocessor.frontmatter]
 command = "cargo run --manifest-path backend/Cargo.toml --"
 renderer = ["html"]
+symbol = "+++"
 
 [output.html]
 smart-punctuation = true
