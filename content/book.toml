@@ -11,14 +11,13 @@ edition = "2018"
 
 # custom backend to parse frontmatter
 [build]
-build-dir = "../book"
+build-dir = "../build"
 create-missing = false
 use-default-preprocessors = true
 
 [preprocessor.frontmatter]
 command = "cargo run --manifest-path backend/Cargo.toml --"
 renderer = ["html"]
-delimiter = "+++"
 
 [output.html]
 smart-punctuation = true

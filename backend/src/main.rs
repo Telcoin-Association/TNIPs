@@ -1,21 +1,22 @@
 use backend::FrontmatterPreprocessor;
 
+/// Main function for preprocessing data in frontmatter
 fn main() {
     // capture args from env
     let args: Vec<String> = std::env::args().collect();
-    println!("args: {:?}", args);
 
     // Check if the first argument is "supports" and the second argument exists
+    //
+    // mdbook make two preprocessing requests:
+    // 1) check that the renderer is supported
+    // 2) expects json from stdin
     if args.len() > 2 && args[1] == "supports" {
         // Check if the preprocessor supports the specified renderer
         match args[2].as_str() {
-            "html" => {
-                println!("received html request in args :D - returning okay");
-                // Supports HTML renderer
-                std::process::exit(0)
-            }
+            // supports HTML renderer
+            "html" => std::process::exit(0),
             // untested
-            _ => std::process::exit(1), // Does not support the specified renderer
+            _ => std::process::exit(1),
         }
     } else {
         // Normal operation, not checking for renderer support
