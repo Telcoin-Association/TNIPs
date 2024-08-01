@@ -1,8 +1,10 @@
-- title: TNIP Purpose and Guidlines
-- description: Guidlines for TNIP process
-- author: grant (@grantkee)
-- status: Living
-- created: 2024-07-30
++++
+title: TNIP Purpose and Guidlines
+description: Guidlines for TNIP process
+author: grant (@grantkee)
+status: Living
+created: 2024-07-30
++++
 
 # Guidelines for TNIP Process
 ## What is a TNIP?

@@ -9,6 +9,16 @@ description = "Collection of community-driven proposals to improve Telcoin Netwo
 [rust]
 edition = "2018"
 
+# custom backend to parse frontmatter
+[build]
+build-dir = "../book"
+create-missing = false
+use-default-preprocessors = true
+
+[preprocessor.frontmatter]
+command = "cargo run --manifest-path backend/Cargo.toml --"
+renderer = ["html"]
+
 [output.html]
 smart-punctuation = true
 # hide numbers
