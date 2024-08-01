@@ -1,6 +1,6 @@
 +++
 title: TNIP Purpose and Guidlines
-description: Guidelines for TNIP process. This description is really really long to demonstrate how long descriptions can get for some TNIPs.
+description: Guidelines for TNIP process.
 author: grant (@grantkee) <grant@telcoin.org>, et al.
 status: Living
 created: 2024-07-30
@@ -229,4 +229,4 @@ This document was derived heavily from [Ethereum's EIP-1](https://github.com/eth
 
 ## Copyright
 
-Copyright and related rights waived via [CC0](../LICENSE.md).
+Copyright and related rights waived via [CC0](./LICENSE.md).

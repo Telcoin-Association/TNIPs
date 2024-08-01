@@ -85,12 +85,18 @@
     }
     .pagetoc .pagetoc-H2 {
         padding-left: 20px;
+        /* default body is 1.6rem */
+        font-size: 1.5rem;
     }
     .pagetoc .pagetoc-H3 {
         padding-left: 40px;
+        /* default body is 1.6rem */
+        font-size: 1.4rem;
     }
     .pagetoc .pagetoc-H4 {
         padding-left: 60px;
+        /* default body is 1.6rem */
+        font-size: 1.3rem;
     }
 }
 

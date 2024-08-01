@@ -5,6 +5,7 @@ use mdbook::preprocess::{CmdPreprocessor, Preprocessor, PreprocessorContext};
 use mdbook::BookItem;
 use pulldown_cmark::{CowStr, Event, Tag, TagEnd};
 use pulldown_cmark_to_cmark::cmark;
+use regex::{Captures, Regex};
 use semver::{Version, VersionReq};
 use std::io;
 
@@ -140,7 +141,12 @@ fn create_html_table_events<'a>(frontmatter: Vec<(String, String)>) -> Vec<Event
         "<table class=\"preamble\">\n".into(),
     )));
     // loop through frontmatter to create table rows
-    for (key, value) in frontmatter {
+    for (key, mut value) in frontmatter {
+        // create links for github/email
+        if key == "author" {
+            value = linkify_text(&value)
+        }
+
         events.push(Event::Html(CowStr::Boxed(
             format!("<tr><th>{}</td><td>{}</td></tr>\n", key, value).into(),
         )));
@@ -150,4 +156,24 @@ fn create_html_table_events<'a>(frontmatter: Vec<(String, String)>) -> Vec<Event
     // end tag
     events.push(Event::End(TagEnd::HtmlBlock));
     events
+}
+
+/// Create anchor tags for github usernames and emails inside frontmatter.
+fn linkify_text(text: &str) -> String {
+    // Regex to find GitHub usernames and emails
+    let github_regex = Regex::new(r"\(@([a-zA-Z0-9_]+)\)").expect("github regex");
+    let email_regex =
+        Regex::new(r"<([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)>").expect("email regex");
+
+    // Replace GitHub usernames with links
+    let text = github_regex.replace_all(text, |caps: &Captures| {
+        format!("<a href=\"https://github.com/{0}\">@{0}</a>", &caps[1])
+    });
+
+    // Replace emails with mailto links
+    let text = email_regex.replace_all(&text, |caps: &Captures| {
+        format!("<a href=\"mailto:{}\">{}</a>", &caps[1], &caps[1])
+    });
+
+    text.to_string()
 }
