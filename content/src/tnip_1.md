@@ -6,6 +6,13 @@ status: Living
 created: 2024-07-30
 +++
 
+<table class="preamble">
+  <tr>
+    <th>super title</th>
+    <td>SUPER TITLE</td>
+  </tr>
+</table>
+
 # Guidelines for TNIP Process
 ## What is a TNIP?
 

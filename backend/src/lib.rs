@@ -1,8 +1,9 @@
-use mdbook::book::{Book, Chapter};
+use mdbook::book::Book;
 use mdbook::errors::Error;
 use mdbook::preprocess::{CmdPreprocessor, Preprocessor, PreprocessorContext};
 use mdbook::BookItem;
-use pulldown_cmark::{CowStr, Event};
+use pulldown_cmark::{CowStr, Event, Tag, TagEnd};
+use pulldown_cmark_to_cmark::cmark;
 use semver::{Version, VersionReq};
 use std::collections::HashMap;
 use std::fs::File;
@@ -56,13 +57,14 @@ impl Preprocessor for FrontmatterPreprocessor {
         // // default frontmatter delimiter is "+++"
         // let mut frontmatter_delimiter = "+++";
 
-        // let frontmatter_symbol = if let Some(toml::Value::String(val)) =
-        //     ctx.config.get("preprocessor.frontmatter.symbol")
-        // {
-        //     let _ = writeln!(log_file, "frontmatter symbol from toml:", val);
-        // };
-
-        let frontmatter_delimiter = CowStr::Borrowed("+++");
+        let frontmatter_delimiter = if let Some(toml::Value::String(val)) =
+            ctx.config.get("preprocessor.frontmatter.delimiter")
+        {
+            let _ = writeln!(log_file, "frontmatter symbol from toml: {:?}", val);
+            CowStr::Borrowed(val)
+        } else {
+            CowStr::Borrowed("+++")
+        };
 
         // loop through each book item to parse chapters
         book.for_each_mut(|item| {
@@ -72,68 +74,57 @@ impl Preprocessor for FrontmatterPreprocessor {
                 // flag for capturing frontmatter
                 let mut capture = false;
                 let mut frontmatter_collection = vec![];
-                let mut formatted_content = String::new();
-                let mut start_index = None;
-                let mut end_index = 0;
+                let mut formatted_content = vec![];
 
+                // create markdown parser for events
                 let parser = pulldown_cmark::Parser::new(&chapter.content);
+                let _ = writeln!(log_file, "parser:\n{:?}", parser);
 
-                // loop through parsed chapter for find frontmatter based on delimiter
-                for (idx, event) in parser.enumerate() {
+                // loop through events to find frontmatter section based on delimiter
+                for event in parser {
                     let _ = writeln!(log_file, "event: {:?}", event);
                     match event {
                         // handle delimiter
                         Event::Text(ref text) if text == &frontmatter_delimiter => {
                             // first time seeing delimiter, this is false
+                            // second time, construct table with captured frontmatter
                             if capture {
-                                // End capturing, process the captured text
                                 let frontmatter = parse_frontmatter(&frontmatter_collection);
-                                let html_table = create_html_table(&frontmatter);
-                                formatted_content.push_str(&html_table);
+                                let html_table = create_html_table_events(frontmatter);
+
+                                // concat doesn't work
+                                for event in html_table {
+                                    formatted_content.push(event);
+                                }
                                 frontmatter_collection.clear();
-                                end_index = idx;
-                            } else {
-                                // Start capturing
-                                start_index = Some(idx);
                             }
+                            // turn capture flag "true"
+                            //
+                            // and don't capture the delimiter event
                             capture = !capture;
                         }
                         // capture content within frontmatter delimiters
-                        Event::Text(text) if capture => {
-                            frontmatter_collection.push(text.to_string())
+                        Event::Text(content) if capture => {
+                            frontmatter_collection.push(content.to_string())
                         }
-                        _ => {
-                            if !capture {
-                                if let Some(event_text) = event_text(&event) {
-                                    formatted_content.push_str(event_text);
-                                }
-                            }
-                        }
+                        // avoid capturing "SoftBreak", etc. in frontmatter
+                        _ if !capture => formatted_content.push(event),
+                        // ignore "SoftBreak"s in frontmatter section
+                        _ => (),
                     }
                 }
 
-                // Replace the original content only if markers were found
-                if let Some(start) = start_index {
-                    chapter.content = formatted_content;
-                }
+                let _ = writeln!(log_file, "new content:\n\n\n{:?}", formatted_content);
+
+                // replace chapter content with formatted content
+                let mut buf = String::with_capacity(chapter.content.len());
+                chapter.content = cmark(formatted_content.iter(), &mut buf)
+                    .map(|_| buf)
+                    // .map_err(|err| format!("Markdown serialization failed: {}", err).into())
+                    .expect("Markdown serialization failed")
             }
         });
-        // writeln!(log_file, "Received ctx: {:?}", ctx)?;
-        // writeln!(log_file, "Received book: {:?}", &book)?;
-        // for item in &mut book.sections {
-        //     println!("item: {:#?}", item);
-        //     // if let Some(content) = &mut item.content {
-        //     //     println!("content: {:#?}", content);
-        //     //     if let Some(frontmatter) = content.split("---").nth(1) {
-        //     //         let parsed: HashMap<String, Value> =
-        //     //             serde_json::from_str(frontmatter).map_err(|e| Error::msg(e.to_string()))?;
 
-        //     //         // Now you can manipulate the content or use handlebars to template it
-        //     //         // For example, adding parsed data to the content:
-        //     //         content.push_str(&format!("\n<!-- Parsed Name: {:?} -->", parsed["name"]));
-        //     //     }
-        //     // }
-        // }
         Ok(book)
     }
 }
@@ -142,6 +133,7 @@ fn parse_frontmatter(frontmatter_text: &[String]) -> HashMap<String, String> {
     frontmatter_text
         .iter()
         .filter_map(|line| {
+            // separate by colon + space
             let parts: Vec<_> = line.splitn(2, ':').collect();
             if parts.len() == 2 {
                 Some((parts[0].trim().to_string(), parts[1].trim().to_string()))
@@ -152,22 +144,39 @@ fn parse_frontmatter(frontmatter_text: &[String]) -> HashMap<String, String> {
         .collect()
 }
 
-fn create_html_table(frontmatter: &HashMap<String, String>) -> String {
-    let mut table = String::from("<table class='preamble'>\n");
+// fn create_html_table(frontmatter: &HashMap<String, String>) -> String {
+//     let mut table = String::from("<table>\n");
+//     for (key, value) in frontmatter {
+//         table.push_str(&format!("<tr><td>{}</td><td>{}</td></tr>\n", key, value));
+//     }
+//     table.push_str("</table>\n");
+//     table
+// }
+
+fn create_html_table_events<'a>(frontmatter: HashMap<String, String>) -> Vec<Event<'a>> {
+    // create events for cmark
+    let mut events = vec![];
+    // start tag
+    events.push(Event::Start(Tag::HtmlBlock));
+    // create table
+    events.push(Event::Html(CowStr::Boxed(
+        "<table class=\"preamble\">\n".into(),
+    )));
+
+    // loop through frontmatter to create table rows
     for (key, value) in frontmatter {
-        table.push_str(&format!("<tr><th>{}</td><td>{}</td></tr>\n", key, value));
+        events.push(Event::Html(CowStr::Boxed(
+            format!("<tr><th>{}</td><td>{}</td></tr>\n", key, value).into(),
+        )));
     }
-    table.push_str("</table>\n");
-    table
+
+    // close table
+    events.push(Event::Html(CowStr::Boxed("</table>\n".into())));
+    // end tag
+    events.push(Event::End(TagEnd::HtmlBlock));
+    events
 }
 
-fn event_text<'a>(event: &'a Event) -> Option<&'a str> {
-    if let Event::Text(text) = event {
-        Some(text)
-    } else {
-        None
-    }
-}
 #[cfg(test)]
 mod tests {
     use crate::FrontmatterPreprocessor;
