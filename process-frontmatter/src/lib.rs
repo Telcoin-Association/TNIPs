@@ -6,7 +6,6 @@ use mdbook::BookItem;
 use pulldown_cmark::{CowStr, Event, Tag, TagEnd};
 use pulldown_cmark_to_cmark::cmark;
 use semver::{Version, VersionReq};
-use std::collections::HashMap;
 use std::io;
 
 #[derive(Default)]
@@ -109,7 +108,9 @@ impl Preprocessor for FrontmatterPreprocessor {
 }
 
 /// Create key/values for frontmatter by splitting ":" and trimming whitespace.
-fn parse_frontmatter(frontmatter_text: &[String]) -> HashMap<String, String> {
+///
+/// Use a `Vec` so the order is preserved.
+fn parse_frontmatter(frontmatter_text: &[String]) -> Vec<(String, String)> {
     frontmatter_text
         .iter()
         .filter_map(|line| {
@@ -129,7 +130,7 @@ fn parse_frontmatter(frontmatter_text: &[String]) -> HashMap<String, String> {
 /// The events are created for use with pulldown cmark.
 ///
 /// There may be a better way to do this, but this seems sturdy.
-fn create_html_table_events<'a>(frontmatter: HashMap<String, String>) -> Vec<Event<'a>> {
+fn create_html_table_events<'a>(frontmatter: Vec<(String, String)>) -> Vec<Event<'a>> {
     // create events for cmark
     let mut events = vec![];
     // start tag

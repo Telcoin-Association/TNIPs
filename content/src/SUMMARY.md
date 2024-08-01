@@ -1,4 +1,5 @@
 # Summary
 
-[Guidelines](README.md)
-- [TNIP-1](./tnip_1.md)
+[Introduction](../../README.md)
+- [TNIPs](tnips/README.md)
+  - [TNIP-1](tnips/tnip_1.md)

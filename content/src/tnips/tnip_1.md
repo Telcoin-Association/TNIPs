@@ -1,7 +1,7 @@
 +++
 title: TNIP Purpose and Guidlines
 description: Guidelines for TNIP process. This description is really really long to demonstrate how long descriptions can get for some TNIPs.
-author: grant (@grantkee)
+author: grant (@grantkee) <grant@telcoin.org>, et al.
 status: Living
 created: 2024-07-30
 +++
@@ -119,23 +119,25 @@ Headers requiring dates will always do so in the format of ISO 8601 (yyyy-mm-dd)
 
 The `author` header lists the names, email addresses or usernames of the authors/owners of the TNIP. Those who prefer anonymity may use a username only, or a first name and a username. The format of the `author` header value must be:
 
-> Random J. User &lt;address@dom.ain&gt;
+name + email
+> Random T. User &lt;address@dom.ain&gt;
 
 or
 
-> Random J. User (@username)
+name + github username
+> Another E. User (@username)
 
 or
 
-> Random J. User (@username) &lt;address@dom.ain&gt;
+name + username + email
+> Some L. User (@username) &lt;address@dom.ain&gt;
 
-if the email address and/or GitHub username is included, and
+or
 
-> Random J. User
+just name
+> Again S. User
 
-if neither the email address nor the GitHub username are given.
-
-At least one author must use a GitHub username, in order to get notified on change requests and have the capability to approve or reject them.
+Note: At least one author must use a GitHub username, in order to get notified on change requests and have the capability to approve or reject them.
 
 ### `discussions-to` header
 
