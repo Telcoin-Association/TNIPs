@@ -116,19 +116,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c4b4d0bd25bd0b74681c0ad21497610ce1b7c91b1022cd21c80c6fbdd9476b0"
 
 [[package]]
-name = "backend"
-version = "0.1.0"
-dependencies = [
- "mdbook",
- "pulldown-cmark 0.11.0",
- "pulldown-cmark-to-cmark",
- "semver",
- "serde",
- "serde_json",
- "toml",
-]
-
-[[package]]
 name = "backtrace"
 version = "0.3.73"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1269,6 +1256,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "process-frontmatter"
+version = "0.1.0"
+dependencies = [
+ "mdbook",
+ "pulldown-cmark 0.11.0",
+ "pulldown-cmark-to-cmark",
+ "semver",
+ "serde",
+ "serde_json",
+ "toml",
 ]
 
 [[package]]

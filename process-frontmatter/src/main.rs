@@ -1,4 +1,4 @@
-use backend::FrontmatterPreprocessor;
+use process_frontmatter::FrontmatterPreprocessor;
 
 /// Main function for preprocessing data in frontmatter
 fn main() {

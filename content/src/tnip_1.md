@@ -1,17 +1,10 @@
 +++
 title: TNIP Purpose and Guidlines
-description: Guidlines for TNIP process
+description: Guidelines for TNIP process. This description is really really long to demonstrate how long descriptions can get for some TNIPs.
 author: grant (@grantkee)
 status: Living
 created: 2024-07-30
 +++
-
-<table class="preamble">
-  <tr>
-    <th>super title</th>
-    <td>SUPER TITLE</td>
-  </tr>
-</table>
 
 # Guidelines for TNIP Process
 ## What is a TNIP?
@@ -28,7 +21,14 @@ For Telcoin Network implementers, TNIPs are a convenient way to track the progre
 
 There are three types of TNIP:
 
-- A **Standards Track TNIP** describes any change that affects most or all Telcoin Network implementations, such as: a change to the network protocol, a change in block or transaction validity rules, proposed application standards/conventions, or any change or addition that affects the interoperability of applications using Telcoin Network. Standards Track TNIPs consist of three parts: a design document, an implementation, and (if warranted) an update to the [formal specification]().
+- A **Standards Track TNIP** describes any change that affects most or all Telcoin Network implementations, such as: a change to the network protocol, a change in block or transaction validity rules, proposed application standards/conventions, or any change or addition that affects the interoperability of applications using Telcoin Network. Furthermore, Standards Track TNIPs are broken down into the following categories:
+  - **Core**: improvements requiring a consensus fork, as well as changes that are not necessarily consensus critical but may be relevant to “core dev” discussions.
+  - **Networking**: includes improvements around devp2p and Light Telcoin Network Subprotocol, as well as proposed improvements to network protocol specifications.
+  - **Interface**: includes improvements around around client API/RPC specifications and standards, as well as language-level standards like method names and contract ABIs.
+
+- A **Meta EIP** describes a process surrounding Telcoin Network or proposes a change to (or an event in) a process. Process TNIPs are like Standards Track TNIPs but apply to areas other than the Telcoin Network protocol itself. They may propose an implementation, but not to Telcoin Network's codebase; they often require community consensus; unlike Informational TNIPs, they are more than recommendations, and users are typically not free to ignore them. Examples include procedures, guidelines, changes to the decision-making process, and changes to the tools or environment used in Telcoin Network development. Any meta-TNIP is also considered a Process TNIP.
+
+- An **Informational TNIP** describes an Telcoin Network design issue, or provides general guidelines or information to the Telcoin Network community, but does not propose a new feature. Informational TNIPs do not necessarily represent Telcoin Network community consensus or a recommendation, so users and implementers are free to ignore Informational TNIPs.
 
 It is highly recommended that a single TNIP contain a single key proposal or new idea. TNIPs that focus on a pariticular issue are more likely to become integrated into the protocol.
 

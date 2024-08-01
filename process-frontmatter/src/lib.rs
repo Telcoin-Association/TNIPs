@@ -108,6 +108,7 @@ impl Preprocessor for FrontmatterPreprocessor {
     }
 }
 
+/// Create key/values for frontmatter by splitting ":" and trimming whitespace.
 fn parse_frontmatter(frontmatter_text: &[String]) -> HashMap<String, String> {
     frontmatter_text
         .iter()
@@ -123,6 +124,11 @@ fn parse_frontmatter(frontmatter_text: &[String]) -> HashMap<String, String> {
         .collect()
 }
 
+/// Create owned events for table html.
+///
+/// The events are created for use with pulldown cmark.
+///
+/// There may be a better way to do this, but this seems sturdy.
 fn create_html_table_events<'a>(frontmatter: HashMap<String, String>) -> Vec<Event<'a>> {
     // create events for cmark
     let mut events = vec![];

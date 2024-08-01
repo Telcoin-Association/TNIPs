@@ -9,21 +9,20 @@ description = "Collection of community-driven proposals to improve Telcoin Netwo
 [rust]
 edition = "2018"
 
-# custom backend to parse frontmatter
 [build]
 build-dir = "../build"
 create-missing = false
 use-default-preprocessors = true
 
 [preprocessor.frontmatter]
-command = "cargo run --manifest-path backend/Cargo.toml --"
+command = "cargo run --manifest-path process-frontmatter/Cargo.toml"
 renderer = ["html"]
 
 [output.html]
 smart-punctuation = true
 # hide numbers
 no-section-label = true
-additional-css = ["theme/css/pagetoc.css"]
+additional-css = ["theme/css/pagetoc.css", "theme/css/preamble.css"]
 additional-js = ["theme/js/pagetoc.js"]
 cname = "tnips.telcoin.network"
 git-repository-url = "https://github.com/telcoin-association/TNIPs/"

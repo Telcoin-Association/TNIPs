@@ -40,26 +40,29 @@ tnipv <INPUT FILE / DIRECTORY>
 ```
 
 ## Build the status page locally
+The TNIP book is built using rust.
+
+The mdbook compiles the binary in `process-frontmatter`. This preprocessor looks parses content between "+++" to create the preamble for each TNIP.
 
 ### Install prerequisites
 
 1. Open Terminal.
 
-2. Check whether you have mdbook installed.
+2. Check whether you have mdbook installed (requires rust).
 
    ```sh
    mdbook --version
    ```
 
-3. If you don't have mdbook installed, install mdbook.
+3. If you don't have mdbook installed, install mdbook. If you don't have rust, it's recommended to install using `rustup`.
 
-4. Install Bundler:
+4. Install mdbook with cargo (shipped with rust):
 
    ```sh
    cargo install mdbook
    ```
 
-### Build your local Jekyll site
+### Build the book locally
 
 1. Compile the markdown, start the server, and open the page:
 
