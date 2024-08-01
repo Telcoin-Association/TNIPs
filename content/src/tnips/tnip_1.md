@@ -117,25 +117,25 @@ Headers requiring dates will always do so in the format of ISO 8601 (yyyy-mm-dd)
 
 ### `author` header
 
-The `author` header lists the names, email addresses or usernames of the authors/owners of the TNIP. Those who prefer anonymity may use a username only, or a first name and a username. The format of the `author` header value must be:
-
-name + email
-> Random T. User &lt;address@dom.ain&gt;
-
-or
+The `author` header lists the names, email addresses and/or usernames of the authors/owners of the TNIP. Those who prefer anonymity may use a username only, or a first name and a username. The format of the `author` header value must be:
 
 name + github username
 > Another E. User (@username)
 
 or
 
+name + email
+> Random T. User (address@dom.ain)
+
+or
+
 name + username + email
-> Some L. User (@username) &lt;address@dom.ain&gt;
+> Some L. User (@username) (address@dom.ain)
 
 or
 
 just name
-> Again S. User
+> Mystery S. User
 
 Note: At least one author must use a GitHub username, in order to get notified on change requests and have the capability to approve or reject them.
 
