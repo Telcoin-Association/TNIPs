@@ -1,7 +1,7 @@
 +++
-title: TNIP Purpose and Guidlines
+title: TNIP Purpose and Guidelines
 description: Guidelines for TNIP process.
-author: grant (@grantkee) <grant@telcoin.org>, et al.
+author: grant (@grantkee) (grant@telcoin.org), et al.
 status: Living
 created: 2024-07-30
 +++

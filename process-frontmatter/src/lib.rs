@@ -117,6 +117,7 @@ fn parse_frontmatter(frontmatter_text: &[String]) -> Vec<(String, String)> {
         .filter_map(|line| {
             // separate by colon + space
             let parts: Vec<_> = line.splitn(2, ':').collect();
+
             if parts.len() == 2 {
                 Some((parts[0].trim().to_string(), parts[1].trim().to_string()))
             } else {
@@ -163,16 +164,16 @@ fn linkify_text(text: &str) -> String {
     // Regex to find GitHub usernames and emails
     let github_regex = Regex::new(r"\(@([a-zA-Z0-9_]+)\)").expect("github regex");
     let email_regex =
-        Regex::new(r"<([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)>").expect("email regex");
+        Regex::new(r"\(([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)\)").expect("email regex");
 
     // Replace GitHub usernames with links
     let text = github_regex.replace_all(text, |caps: &Captures| {
-        format!("<a href=\"https://github.com/{0}\">@{0}</a>", &caps[1])
+        format!("(<a href=\"https://github.com/{0}\">@{0}</a>)", &caps[1])
     });
 
     // Replace emails with mailto links
     let text = email_regex.replace_all(&text, |caps: &Captures| {
-        format!("<a href=\"mailto:{}\">{}</a>", &caps[1], &caps[1])
+        format!("(<a href=\"mailto:{}\">{}</a>)", &caps[1], &caps[1])
     });
 
     text.to_string()
