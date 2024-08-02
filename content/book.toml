@@ -3,7 +3,7 @@ authors = ["grantkee", "telcoin association"]
 language = "en"
 multilingual = false
 src = "src"
-title = "telcoin network improvement proposals"
+title = "Telcoin Network Improvement Proposals"
 description = "Collection of community-driven proposals to improve Telcoin Network protocol."
 
 [rust]
