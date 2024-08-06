@@ -1,8 +1,10 @@
-- title: TNIP Purpose and Guidlines
-- description: Guidlines for TNIP process
-- author: grant (@grantkee)
-- status: Living
-- created: 2024-07-30
++++
+title: TNIP Purpose and Guidelines
+description: Guidelines for TNIP process.
+author: grant (@grantkee) (grant@telcoin.org), et al.
+status: Living
+created: 2024-07-30
++++
 
 # Guidelines for TNIP Process
 ## What is a TNIP?
@@ -19,7 +21,14 @@ For Telcoin Network implementers, TNIPs are a convenient way to track the progre
 
 There are three types of TNIP:
 
-- A **Standards Track TNIP** describes any change that affects most or all Telcoin Network implementations, such as: a change to the network protocol, a change in block or transaction validity rules, proposed application standards/conventions, or any change or addition that affects the interoperability of applications using Telcoin Network. Standards Track TNIPs consist of three parts: a design document, an implementation, and (if warranted) an update to the [formal specification]().
+- A **Standards Track TNIP** describes any change that affects most or all Telcoin Network implementations, such as: a change to the network protocol, a change in block or transaction validity rules, proposed application standards/conventions, or any change or addition that affects the interoperability of applications using Telcoin Network. Furthermore, Standards Track TNIPs are broken down into the following categories:
+  - **Core**: improvements requiring a consensus fork, as well as changes that are not necessarily consensus critical but may be relevant to “core dev” discussions.
+  - **Networking**: includes improvements around devp2p and Light Telcoin Network Subprotocol, as well as proposed improvements to network protocol specifications.
+  - **Interface**: includes improvements around around client API/RPC specifications and standards, as well as language-level standards like method names and contract ABIs.
+
+- A **Meta EIP** describes a process surrounding Telcoin Network or proposes a change to (or an event in) a process. Process TNIPs are like Standards Track TNIPs but apply to areas other than the Telcoin Network protocol itself. They may propose an implementation, but not to Telcoin Network's codebase; they often require community consensus; unlike Informational TNIPs, they are more than recommendations, and users are typically not free to ignore them. Examples include procedures, guidelines, changes to the decision-making process, and changes to the tools or environment used in Telcoin Network development. Any meta-TNIP is also considered a Process TNIP.
+
+- An **Informational TNIP** describes an Telcoin Network design issue, or provides general guidelines or information to the Telcoin Network community, but does not propose a new feature. Informational TNIPs do not necessarily represent Telcoin Network community consensus or a recommendation, so users and implementers are free to ignore Informational TNIPs.
 
 It is highly recommended that a single TNIP contain a single key proposal or new idea. TNIPs that focus on a pariticular issue are more likely to become integrated into the protocol.
 
@@ -108,25 +117,27 @@ Headers requiring dates will always do so in the format of ISO 8601 (yyyy-mm-dd)
 
 ### `author` header
 
-The `author` header lists the names, email addresses or usernames of the authors/owners of the TNIP. Those who prefer anonymity may use a username only, or a first name and a username. The format of the `author` header value must be:
+The `author` header lists the names, email addresses and/or usernames of the authors/owners of the TNIP. Those who prefer anonymity may use a username only, or a first name and a username. The format of the `author` header value must be:
 
-> Random J. User &lt;address@dom.ain&gt;
-
-or
-
-> Random J. User (@username)
+name + github username
+> Another E. User (@username)
 
 or
 
-> Random J. User (@username) &lt;address@dom.ain&gt;
+name + email
+> Random T. User (address@dom.ain)
 
-if the email address and/or GitHub username is included, and
+or
 
-> Random J. User
+name + username + email
+> Some L. User (@username) (address@dom.ain)
 
-if neither the email address nor the GitHub username are given.
+or
 
-At least one author must use a GitHub username, in order to get notified on change requests and have the capability to approve or reject them.
+just name
+> Mystery S. User
+
+Note: At least one author must use a GitHub username, in order to get notified on change requests and have the capability to approve or reject them.
 
 ### `discussions-to` header
 
