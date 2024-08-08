@@ -3,7 +3,7 @@ use mdbook::book::Book;
 use mdbook::errors::Error;
 use mdbook::preprocess::{CmdPreprocessor, Preprocessor, PreprocessorContext};
 use mdbook::BookItem;
-use pulldown_cmark::{CowStr, Event, Tag, TagEnd};
+use pulldown_cmark::{CowStr, Event, Options, Parser, Tag, TagEnd};
 use pulldown_cmark_to_cmark::cmark;
 use regex::{Captures, Regex};
 use semver::{Version, VersionReq};
@@ -48,8 +48,8 @@ impl Preprocessor for FrontmatterPreprocessor {
     }
 
     fn run(&self, _ctx: &PreprocessorContext, mut book: Book) -> Result<Book, Error> {
-        // NOTE: "---" is interpreted as Header, so use "+++"
-        let frontmatter_delimiter = CowStr::Borrowed("+++");
+        // tell parser to expect yaml style metadata blocks in files
+        let enable_frontmatter = Options::ENABLE_YAML_STYLE_METADATA_BLOCKS;
 
         // loop through each book item to parse chapters
         book.for_each_mut(|item| {
@@ -61,38 +61,39 @@ impl Preprocessor for FrontmatterPreprocessor {
                 let mut formatted_content = vec![];
 
                 // create markdown parser for events
-                let parser = pulldown_cmark::Parser::new(&chapter.content);
+                let parser = Parser::new_ext(&chapter.content, enable_frontmatter);
 
                 // loop through events to find frontmatter section based on delimiter
                 for event in parser {
                     match event {
                         // handle delimiter
-                        Event::Text(ref text) if text == &frontmatter_delimiter => {
-                            // first time seeing delimiter, this is false
-                            // second time, construct table with captured frontmatter
-                            if capture {
-                                let frontmatter = parse_frontmatter(&frontmatter_collection);
-                                let html_table = create_html_table_events(frontmatter);
-
-                                // concat doesn't work
-                                for event in html_table {
-                                    formatted_content.push(event);
-                                }
-                                frontmatter_collection.clear();
-                            }
+                        Event::Start(Tag::MetadataBlock(_)) => {
                             // turn capture flag "true"
                             //
                             // and don't capture the delimiter event
-                            capture = !capture;
+                            capture = true;
+                        }
+                        Event::End(TagEnd::MetadataBlock(_)) => {
+                            // construct table with captured frontmatter
+                            let frontmatter = parse_frontmatter(&frontmatter_collection);
+                            let html_table = create_html_table_events(frontmatter);
+
+                            // concat doesn't work
+                            for event in html_table {
+                                formatted_content.push(event);
+                            }
+                            frontmatter_collection.clear();
+                            capture = false;
                         }
                         // capture content within frontmatter delimiters
                         Event::Text(content) if capture => {
-                            frontmatter_collection.push(content.to_string())
+                            // Split the content by new lines and push each line separately
+                            content.lines().for_each(|line| {
+                                frontmatter_collection.push(line.trim().to_string())
+                            });
                         }
-                        // avoid capturing "SoftBreak", etc. in frontmatter
-                        _ if !capture => formatted_content.push(event),
-                        // ignore "SoftBreak"s in frontmatter section
-                        _ => (),
+                        // collect formatted content
+                        _ => formatted_content.push(event),
                     }
                 }
 
@@ -164,7 +165,7 @@ fn linkify_text(text: &str) -> String {
     // Regex to find GitHub usernames and emails
     let github_regex = Regex::new(r"\(@([a-zA-Z0-9_]+)\)").expect("github regex");
     let email_regex =
-        Regex::new(r"\(([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)\)").expect("email regex");
+        Regex::new(r"\<([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)\>").expect("email regex");
 
     // Replace GitHub usernames with links
     let text = github_regex.replace_all(text, |caps: &Captures| {
@@ -173,7 +174,7 @@ fn linkify_text(text: &str) -> String {
 
     // Replace emails with mailto links
     let text = email_regex.replace_all(&text, |caps: &Captures| {
-        format!("(<a href=\"mailto:{}\">{}</a>)", &caps[1], &caps[1])
+        format!("<a href=\"mailto:{}\">{}</a>", &caps[1], &caps[1])
     });
 
     text.to_string()
