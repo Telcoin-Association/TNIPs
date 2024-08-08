@@ -125,12 +125,12 @@ name + github username
 or
 
 name + email
-> Random T. User (address@dom.ain)
+> Random T. User &lt;address@dom.ain&gt;
 
 or
 
 name + username + email
-> Some L. User (@username) (address@dom.ain)
+> Some L. User (@username) &lt;address@dom.ain&gt;
 
 or
 
