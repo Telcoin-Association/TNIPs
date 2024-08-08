@@ -10,7 +10,7 @@ description = "Collection of community-driven proposals to improve Telcoin Netwo
 edition = "2018"
 
 [build]
-build-dir = "../build"
+build-dir = "../book"
 create-missing = false
 use-default-preprocessors = true
 
@@ -20,6 +20,7 @@ renderer = ["html"]
 
 [output.html]
 smart-punctuation = true
+
 # hide numbers
 no-section-label = true
 additional-css = ["theme/css/pagetoc.css", "theme/css/preamble.css"]
