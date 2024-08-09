@@ -1,7 +1,7 @@
 +++
 title: <The TNIP title is a few words, not a complete sentence>
 description: <Description is one full (short) sentence>
-author: <a comma separated list of the author's or authors' name + GitHub username (in parenthesis), or name and email (in parenthesis).  Example, FirstName LastName (@GitHubUsername), FirstName LastName (foo@bar.com), FirstName (@GitHubUsername) and GitHubUsername (@GitHubUsername)>
+author: <a comma separated list of the author's or authors' name + (GitHub username) (in parenthesis), or name and <email> (in &lt;&gt;).  Example, FirstName LastName (@GitHubUsername), FirstName LastName &lt;foo@bar.com&gt;, FirstName (@GitHubUsername) and GitHubUsername (@GitHubUsername)>
 discussions-to: <URL>
 status: Draft
 created: <date created on, in ISO 8601 (yyyy-mm-dd) format>

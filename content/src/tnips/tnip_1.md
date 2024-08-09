@@ -1,10 +1,10 @@
-+++
+---
 title: TNIP Purpose and Guidelines
 description: Guidelines for TNIP process.
-author: grant (@grantkee) (grant@telcoin.org), et al.
+author: grant (@grantkee) <grant@telcoin.org>, et al.
 status: Living
 created: 2024-07-30
-+++
+---
 
 # Guidelines for TNIP Process
 ## What is a TNIP?
@@ -125,12 +125,12 @@ name + github username
 or
 
 name + email
-> Random T. User (address@dom.ain)
+> Random T. User &lt;address@dom.ain&gt;
 
 or
 
 name + username + email
-> Some L. User (@username) (address@dom.ain)
+> Some L. User (@username) &lt;address@dom.ain&gt;
 
 or
 
