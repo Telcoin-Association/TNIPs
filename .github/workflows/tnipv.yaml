@@ -55,18 +55,18 @@ jobs:
           check_filenames: true
           ignore_words_file: config/.codespell-whitelist
           path: ${{ env.CHANGED_FILES }}
-          skip: .git,Gemfile.lock,**/*.png,**/*.gif,**/*.jpg,**/*.svg,.codespell-whitelist,vendor,_site,_config.yml,style.css
+          skip: .git,**/*.png,**/*.gif,**/*.jpg,**/*.svg,.codespell-whitelist,book
 
-  eipw-validator:
-    name: EIP Walidator
+  tnip-validator:
+    name: TNIP Validator
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout EIP Repository
+      - name: Checkout TNIP Repository
         uses: actions/checkout@47fbe2df0ad0e27efb67a70beac3555f192b062f
 
-      - uses: ethereum/eipw-action@b8de7ea9ad5cb842301e63898afb996c451c18cf
-        id: eipw
+      - uses: telcoin-association/tnipv-action@b8de7ea9ad5cb842301e63898afb996c451c18cf
+        id: tnipv
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           unchecked: 1, 5069, 5757
