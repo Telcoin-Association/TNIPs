@@ -1,17 +1,19 @@
-+++
+---
 title: TNIP Purpose and Guidelines
 description: Guidelines for TNIP process.
-author: grant (@grantkee) (grant@telcoin.org), et al.
+author: grant (@grantkee) <grant@telcoin.org>, et al.
 status: Living
 created: 2024-07-30
-+++
+---
 
 # Guidelines for TNIP Process
+
 ## What is a TNIP?
 
 TNIP stands for Telcoin Network Improvement Proposal. A TNIP is a design document providing information to the Telcoin Network community, or describing a new feature for Telcoin Network or its processes or environment. The TNIP should provide a concise technical specification of the feature and a rationale for the feature. The TNIP author is responsible for building consensus within the community and documenting dissenting opinions.
 
 ## TNIP Rationale
+creating change to trigger CI
 
 TNIPs are intended to be the primary mechanism for proposing new features, for collecting community technical input on an issue, and for documenting the design decisions that have gone into Telcoin Network. TNIPs are maintained as text files in a versioned repository, so their revision history is the historical record of the feature proposal.
 
@@ -125,12 +127,12 @@ name + github username
 or
 
 name + email
-> Random T. User (address@dom.ain)
+> Random T. User &lt;address@dom.ain&gt;
 
 or
 
 name + username + email
-> Some L. User (@username) (address@dom.ain)
+> Some L. User (@username) &lt;address@dom.ain&gt;
 
 or
 

@@ -8,7 +8,7 @@ The [status page](https://tnips.telcoin.network/) tracks and lists TNIPs, which 
 
 **Before you write a TNIP, ideas MUST be thoroughly discussed on [Telcoin Network Forum](https://forum.telcoin.org/). Once consensus is reached in the community, thoroughly read and review [TNIP-1](https://tnips.telcoin.network/TNIPS/tnip-1), which describes the TNIP process.**
 
-Please note that this repository is for documenting standards and not for help implementing them. These types of inquiries should be directed to the [Telcoin Network Stack Exchange](https://telcoin-network.stackexchange.com). For specific questions and concerns regarding TNIPs, it's best to comment on the relevant discussion thread of the TNIP denoted by the `discussions-to` tag in the TNIP's preamble.
+Please note that this repository is for documenting standards and not for help implementing them. These types of inquiries should be directed to the [Telcoin Network Discord Channel](https://discord.com/channels/1252990258514235544/1252996402942836857). For specific questions and concerns regarding TNIPs, it's best to comment on the relevant discussion thread of the TNIP denoted by the `discussions-to` tag in the TNIP's preamble.
 
 ## Preferred Citation Format
 
@@ -18,18 +18,15 @@ Consider any document not published at <https://tnips.telcoin.network/> as a wor
 
 ## Validation and Automerging
 
-The following CI is incomplete, but included here to document future ambitions.
+The CI is incomplete, but included here to document future ambitions.
 
 All pull requests in this repository must pass automated checks before they can be automatically merged:
 
-- [tnip-review-bot](https://github.com/telcoin-association/tnip-review-bot/) determines when PRs can be automatically merged [^1]
-- TNIP-1 rules are enforced using [`tnipw`](https://github.com/telcoin-network/tnipw)[^2]
-- HTML formatting and broken links are enforced using [HTMLProofer](https://github.com/gjtorikian/html-proofer)[^2]
+- TNIP-1 rules are enforced using [`tnipv`](https://github.com/telcoin-network/tnipv)[^2]
 - Spelling is enforced with [CodeSpell](https://github.com/codespell-project/codespell)[^2]
   - False positives sometimes occur. When this happens, please submit a PR editing [.codespell-whitelist](https://github.com/telcoin-association/TNIPs/blob/main/config/.codespell-whitelist) and **ONLY** .codespell-whitelist
 - Markdown best practices are checked using [markdownlint](https://github.com/DavidAnson/markdownlint)[^2]
 
-[^1]: https://github.com/telcoin-network/TNIPs/blob/main/.github/workflows/auto-review-bot.yml
 [^2]: https://github.com/telcoin-network/TNIPs/blob/main/.github/workflows/ci.yml
 
 It is possible to run the TNIP validator locally:
@@ -40,9 +37,10 @@ tnipv <INPUT FILE / DIRECTORY>
 ```
 
 ## Build the status page locally
+
 The TNIP book is built using rust.
 
-The mdbook compiles the binary in `process-frontmatter`. This preprocessor looks parses content between "+++" to create the preamble for each TNIP.
+The mdbook compiles the binary in `process-frontmatter`. This preprocessor looks parses content between "---" to create the preamble for each TNIP.
 
 ### Install prerequisites
 
