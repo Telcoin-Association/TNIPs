@@ -66,12 +66,12 @@ jobs:
       - name: Checkout TNIP Repository
         uses: actions/checkout@v4
 
-      - uses: telcoin-association/tnipv-action@6d9d081b0e08455dc04a0212820a18595fbf85af
+      - uses: telcoin-association/tnipv-action@a55d989c5c072416ab7811829f67f8bbec6b3721
         id: tnipv
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           unchecked: 1, 5069, 5757
-          options-file: config/eipw.toml
+          options-file: config/tnipv.toml
 
   markdownlint:
     name: Markdown Linter
