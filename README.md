@@ -37,6 +37,7 @@ tnipv <INPUT FILE / DIRECTORY>
 ```
 
 ## Build the status page locally
+
 The TNIP book is built using rust.
 
 The mdbook compiles the binary in `process-frontmatter`. This preprocessor looks parses content between "+++" to create the preamble for each TNIP.

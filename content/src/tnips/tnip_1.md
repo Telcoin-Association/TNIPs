@@ -7,6 +7,7 @@ created: 2024-07-30
 ---
 
 # Guidelines for TNIP Process
+
 ## What is a TNIP?
 
 TNIP stands for Telcoin Network Improvement Proposal. A TNIP is a design document providing information to the Telcoin Network community, or describing a new feature for Telcoin Network or its processes or environment. The TNIP should provide a concise technical specification of the feature and a rationale for the feature. The TNIP author is responsible for building consensus within the community and documenting dissenting opinions.
