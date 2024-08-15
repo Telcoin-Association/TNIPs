@@ -1,4 +1,4 @@
-//! Preprocess key/values in-between "+++" as frontmatter.
+//! Preprocess key/values in-between "---" as frontmatter.
 use mdbook::book::Book;
 use mdbook::errors::Error;
 use mdbook::preprocess::{CmdPreprocessor, Preprocessor, PreprocessorContext};

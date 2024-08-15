@@ -1,3 +1,3 @@
 # Configs
 
-Configuration files for markdown linter, spell checking, and the TNIP validator.
+Configuration files for markdown linter, markdown link linter, spell checking, and the TNIP validator.
