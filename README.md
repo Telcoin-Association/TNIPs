@@ -23,7 +23,6 @@ The CI is incomplete, but included here to document future ambitions.
 All pull requests in this repository must pass automated checks before they can be automatically merged:
 
 - TNIP-1 rules are enforced using [`tnipv`](https://github.com/telcoin-network/tnipv)[^2]
-- HTML formatting and broken links are enforced using [HTMLProofer](https://github.com/gjtorikian/html-proofer)[^2]
 - Spelling is enforced with [CodeSpell](https://github.com/codespell-project/codespell)[^2]
   - False positives sometimes occur. When this happens, please submit a PR editing [.codespell-whitelist](https://github.com/telcoin-association/TNIPs/blob/main/config/.codespell-whitelist) and **ONLY** .codespell-whitelist
 - Markdown best practices are checked using [markdownlint](https://github.com/DavidAnson/markdownlint)[^2]
@@ -38,6 +37,7 @@ tnipv <INPUT FILE / DIRECTORY>
 ```
 
 ## Build the status page locally
+
 The TNIP book is built using rust.
 
 The mdbook compiles the binary in `process-frontmatter`. This preprocessor looks parses content between "+++" to create the preamble for each TNIP.
