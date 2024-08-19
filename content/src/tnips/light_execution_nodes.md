@@ -1,11 +1,11 @@
-+++
+---
 title: Execution Nodes for Trustless Public Validation
 description: A separate process for independently executing the output from consensus.
 author: grant (@grantkee)
-discussions-to: TODO: discord server?
+discussions-to: https://forum.telcoin.org/t/light-clients-execution-nodes/296
 status: Draft
 created: 2024-08-06
-+++
+---
 
 ## Abstract
 
@@ -35,7 +35,7 @@ The current architecture of Telcoin Network relies heavily on full, validator no
 
 Such a system supports not only the infrastructure's robustness and the development of the network but also significantly enhances user accessibility and experience. Light nodes, requiring far fewer resources than full nodes, make it possible for a broader range of participants to engage with Telcoin Network. This inclusivity is vital for maintaining the network's decentralization, as it allows individuals with limited hardware capabilities or those unwilling to allocate substantial storage space to still participate actively.
 
-Furthermore, the user experience is notably improved through light nodes, which enable more efficient operation of lightweight applications, such as mobile wallets and bridging attestation services. These nodes allow users to manage their accounts and interact with decentralized applications directly from their devices, without the overhead associated with running a full node. As the blockchain grows, scalability becomes an increasing concern. Light execution nodes offer a solution by offloading the majority of data handling and computation to full nodes, thus alleviating the burden on individual users and enhancing overall network performance.
+Furthermore, the user experience is notably improved through light nodes, which enable more efficient operation of lightweight applications, such as mobile wallets and bridging attestation services. Light execution nodes allow users to manage their accounts and interact with decentralized applications directly from their devices, without the overhead associated with running a full node (such as storage space). As the blockchain grows, scalability becomes an increasing concern. Light execution nodes offer a solution by offloading the majority of data handling and computation to full nodes, thus alleviating the burden on individual users and enhancing overall network performance.
 
 ## Specification
 
