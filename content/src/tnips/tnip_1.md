@@ -40,7 +40,7 @@ A TNIP must meet certain minimum criteria. It must be a clear and complete descr
 
 ### Creating a TNIP
 
-Before you begin writing a formal TNIP, you should vet your idea. Ask the Telcoin Network community first if an idea is original to avoid wasting time on something that will be rejected based on prior research. It is thus recommended to open a discussion thread on [the Telcoin Network forum](https://forum.telcoin.org) to do this.
+Before you begin writing a formal TNIP, you should vet your idea. Ask the Telcoin Network community first if an idea is original to avoid wasting time on something that will be rejected based on prior research. It is thus recommended to open a discussion thread on [the Telcoin Network forum](https://forum.telcoin.org/c/council-proposals/tnip/85) to do this.
 
 Once the idea has been vetted, your next responsibility is to present (by means of a TNIP) the idea to the reviewers and all interested parties, invite editors, developers, and the community to give feedback on the aforementioned channels. You should try and gauge whether the interest in your TNIP is commensurate with both the work involved in implementing it and how many parties will have to conform to it. The work required for implementing a core TNIP is significant and the TNIP will need sufficient interest from the Telcoin Network protocol team. Negative community feedback is taken into consideration and may prevent your TNIP from moving past the Draft stage.
 
@@ -87,7 +87,7 @@ Each TNIP should have the following parts:
 
 ## TNIP Formats and Templates
 
-TNIPs should be written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) format. There is a [template](https://github.com/telcoin-association/TNIPs/blob/main/tnip-template.md) to follow.
+TNIPs should be written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) format. There is a [template](https://github.com/Telcoin-Association/TNIPs/blob/main/content/tnip-template.md) to follow.
 
 ## TNIP Header Preamble
 
@@ -145,7 +145,7 @@ Note: At least one author must use a GitHub username, in order to get notified o
 
 While a TNIP is a draft, a `discussions-to` header will indicate the URL where the TNIP is being discussed.
 
-The preferred discussion URL is a topic on [Telcoin Network Forum](https://forum.telcoin.org/). The URL cannot point to Github pull requests, any URL which is ephemeral, and any URL which can get locked over time (i.e. Reddit topics).
+The preferred discussion URL is a topic on [Telcoin Network Forum](https://forum.telcoin.org/c/council-proposals/tnip/85). The URL cannot point to Github pull requests, any URL which is ephemeral, and any URL which can get locked over time (i.e. Reddit topics).
 
 ### `created` header
 
