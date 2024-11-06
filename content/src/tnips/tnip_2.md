@@ -26,13 +26,9 @@ Introducing a process to rotate eligible validators provides fresh opportunities
 
 The handshake is permissionless. [NVVs](#non-voting-validators-nvvs) initiate contact with known validators to subscribe to the latest consensus. The handshake involves exchanging network information to establish peer connections.
 
-##### Transition from [NVV](#non-voting-validators-nvvs) to [CVV](#committee-voting-validators-cvvs)
-
-[NVVs](#non-voting-validators-nvvs) become eligible to transition to [CVVs](#committee-voting-validators-cvvs) after participating for one full epoch. The epoch boundary marks the transition, with validators signing and broadcasting their final execution results to form a new committee based on a quorum of signatures.
-
 ### Committees
 
-Consensus is managed by staked nodes that form committees and cast votes to reach a quorum.
+Consensus is managed by nodes that staked TEL. These nodes form committees and cast votes to reach a quorum. Committees are only valid for the epoch in which they are current.
 
 ##### Committee Voting Validators ([CVVs](#committee-voting-validators-cvvs))
 
@@ -192,7 +188,11 @@ In the early stages, the core protocol team is responsible for assisting node op
 
 ##### Publicly available epoch genesis
 
-Validators must include a new RPC endpoint called `tn_epochGenesis` that returns the quorum of signatures and the sealed header of the execution result used by the current committee to start the current epoch.
+Protocol implementation must include a new RPC endpoint called `tn_epochGenesis` that returns the quorum of signatures and the sealed header of the execution result used by the current committee to start the current epoch.
+
+##### Transition from [NVV](#non-voting-validators-nvvs) to [CVV](#committee-voting-validators-cvvs)
+
+[NVVs](#non-voting-validators-nvvs) become eligible to transition to [CVVs](#committee-voting-validators-cvvs) after participating for one full epoch. The epoch boundary marks the transition, with validators signing and broadcasting their final execution results to form a new committee based on a quorum of signatures.
 
 ### Future considerations
 
