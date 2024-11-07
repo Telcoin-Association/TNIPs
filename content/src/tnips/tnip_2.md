@@ -33,7 +33,14 @@ Validators currently in the committee, responsible for casting votes, extending 
 
 ##### Non-Voting Validators ([NVVs](#non-voting-validators-nvvs))
 
-Validators that track and execute consensus but do not vote for every block in the epoch. They participate by receiving consensus through a gossip network consisting of both [CVVs](#committee-voting-validators-cvvs) and [NVVs](#non-voting-validators-nvvs). [NVVs](#non-voting-validators-nvvs) only vote on the latest execution result to support new committees during epoch transitions.
+Validators that track and execute consensus but do not vote for every block in the epoch.
+They participate by receiving consensus through a gossip network consisting of both [CVVs](#committee-voting-validators-cvvs) and [NVVs](#non-voting-validators-nvvs).
+[NVVs](#non-voting-validators-nvvs) only vote on the latest execution result to support new committees during epoch transitions.
+
+##### Observing Validators ([OVs](#observing-validators-ovs))
+
+Validators that track and execute consensus but never vote.
+[OVs](#observing-validators-ovs) are primarily used as clients that want to independently verify execution results.
 
 ##### On-chain Committee Information
 
@@ -81,7 +88,7 @@ The timestamp comes from consensus and is immutable based on the leader's certif
 
 Once e<sub>t</sub> is reached, [CVVs](#committee-voting-validators-cvvs) stop accepting new transactions and do not propose any more batches.
 Primaries continue proposing headers to advance the round until all of their outstanding certificates with batches are committed to the DAG.
-Once a Primary's these outstanding certificates are committed to the DAG, the primary includes a system message in it's header to `CloseEpoch`.
+Once a Primary's outstanding certificates are committed to the DAG, the primary includes a system message in it's header to `CloseEpoch`.
 Primaries continue to propose headers until a quourm of [CVVs](#committee-voting-validators-cvvs) include `CloseEpoch` in their certificates.
 
 The committee has up to 60 seconds (or enough time to ensure a reasonable attempt to commit all certified blocks) to reach a quorum of `CloseEpoch` system messages.
@@ -114,17 +121,12 @@ Pending [CVVs](#committee-voting-validators-cvvs) reliably forward all signed ex
 
 ##### Shuffle Mechanism
 
-The Fisher-Yates shuffle algorithm is used to randomly reorder validators. This shuffle occurs once per epoch, and uses the aggregate BLS signature from the leader certificate from the last committed consensus round mixed with the accumulated randomness during the epoch as the source of entropy.
+The Fisher-Yates shuffle algorithm is used to randomly reorder validators.
+This shuffle occurs once per epoch, and uses the aggregate BLS signature from the leader certificate from the last committed consensus round mixed with the accumulated randomness during the epoch as the source of entropy.
 
-##### Leftover Certificates
-
-Transactions are executed if they’re included in the consensus DAG commit, so inevitably there will be transactions that were certified within one epoch but unsettled and executed before *e* is reached. The new committee should not rely on a previous committee’s certificates and must reach consensus again before executing any transactions leftover from a previous epoch. To ensure the best possible user experience, exiting [CVVs](#committee-voting-validators-cvvs) must track and reliably forward any remaining transactions to pending [CVVs](#committee-voting-validators-cvvs). [CVVs](#committee-voting-validators-cvvs) in the new epoch must reverify and prioritize these transactions in the early rounds of the new epoch.
-
-An alternative approach is for [CVVs](#committee-voting-validators-cvvs) to track their certified batches and continue advancing rounds until all their batches are executed. At *e<sub>t</sub>*, validators would stop proposing batches. Primaries would only propose empty headers to ensure additional commits to the DAG. Once all batches for a primary are settled, the primary would include a system message in their proposed headers to indicate the epoch should close. A quorum of these system messages triggers the epoch transaction.
-
-On the happy path, this seems more efficient. The network already spent computation and bandwidth to certify these transactions, and the additional overhead to propose empty blocks to reach consensus seems trivial compared to forwarding certified transactions to the next committee. The next committee would still need to re-verify all transactions, so the computation and bandwidth costs are duplicated for the next committee.
-
-Network latency could cause issues if a certificate is delayed or never committed to the DAG.
+The probability of a node being selected during the shuffle is influenced by the node's effective stake.
+"Effective stake" in this context simply means the amount of stake that affects the node's probability of being selected during the shuffle process.
+See [staking section](#staking) for more details.
 
 #### Recovering from failed execution at *e*
 
@@ -184,7 +186,10 @@ Validator wallets require an NFT issued by Telcoin Association for staking. The 
 
 Validators must first obtain an NFT through Telcoin Association’s decentralized governance and have a fully synced node online. The validator NFT allows wallets to deposit TEL to the staking contract located at `0x07e17e17e17e17e17e17e17e17e17e17e17e17e1`.
 
-Once a node has completed the [staking process](#staking-contract), the validator's status is updated to "active" after one full epoch. Once the validator status is "active" on-chain, it is eligible to become a [CVV](#committee-voting-validators-cvvs). The newly eligible validator will be included in the next shuffle that determines C<sub>n+1</sub>. The node's effective stake is considered during the shuffle process.
+Once a node has completed the [staking process](#staking-contract), the validator's status is updated to "active" after one full epoch.
+Once the validator status is "active" on-chain, it is eligible to become a [CVV](#committee-voting-validators-cvvs).
+The newly eligible validator will be included in the next shuffle that determines C<sub>n+1</sub>.
+The node's effective stake is considered during the shuffle process.
 
 #### Network Discovery
 
@@ -259,6 +264,11 @@ The current target is expected to be a minimum amount of appropriate stake for t
 Governance should review and provide feedback on how validators withdraw and exit the network.
 Further evaluation is needed to identify appropriate penalties for slashable offenses.
 
+The concept of "effective stake" is not clearly defined at this time.
+As penalties and rewards are applied to validator stake, their balance will fluctuate.
+If the amount staked is above the minimum requirement, it may or may not influence the node's chances of being selected in the shuffle.
+Governance should review and provide feedback if validators should be considered more favorably during the shuffle process if their stake is higher than other nodes.
+
 ### Committees On-Chain
 
 Storing committees on-chain ensures any clients following the canonical tip have the latest committee information.
@@ -266,9 +276,25 @@ Validating execution results ensures consensus is reached for committee selectio
 Previous committee information supports clients trying to sync.
 Selecting committees in advance allows the protocol to ensure stable withdrawals for validators exiting the network.
 
-### Closing Epochs
+### Closing Epoch Leftover Certificates
 
+Transactions are executed if they’re included in the consensus DAG commit, so inevitably there will be transactions that were certified within one epoch but unsettled and executed before *e* is reached.
+The new committee should not rely on a previous committee’s certificates and must reach consensus again before executing any transactions leftover from a previous epoch because validators cannot securely propose on behalf of other nodes.
+To ensure the best possible user experience, exiting [CVVs](#committee-voting-validators-cvvs) must track and reliably forward any remaining transactions to pending [CVVs](#committee-voting-validators-cvvs).
+[CVVs](#committee-voting-validators-cvvs) in the new epoch must reverify and prioritize these transactions in the early rounds of the new epoch.
+
+[CVVs](#committee-voting-validators-cvvs) must track their certified batches and continue advancing rounds until all their batches are executed.
+At *e<sub>t</sub>*, validators must stop proposing batches.
+Primaries only propose empty headers to advance rounds and ensure additional commits to the DAG.
+Once all batches for a primary are settled, the primary includes a system message in their proposed headers to indicate the epoch should close.
+A quorum of these system messages triggers the epoch transition.
+
+On the happy path, this seems more efficient.
 Considerable effort, measured in both computation and network bandwidth, is used to reach consensus for batches of transactions.
+The network already spent computation and bandwidth to certify these transactions, and the additional overhead to propose empty blocks to reach consensus seems trivial compared to forwarding certified transactions to the next committee.
+The next committee would still need to re-verify all transactions, so the computation and bandwidth costs are duplicated for the next committee.
+
+Network latency could cause issues if a certificate is delayed or never committed to the DAG.
 
 The protocol could enforce a strict cutoff without any delay to close the epoch, but any certificates containing batches cannot be considered certified by the next committee.
 All certified transactions would need to be forwarded to a new [CVV](#committee-voting-validators-cvvs), reproposed, reverified, and resequenced by the new committee.
