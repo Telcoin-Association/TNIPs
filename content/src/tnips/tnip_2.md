@@ -3,7 +3,7 @@ title: Committee Shuffle at Epoch Boundary
 description: Periodically create new committees to reach consensus by randomly selecting from a group of eligible validators that have stake.
 author: Grant Kee (@grantkee)
 discussions-to: https://forum.telcoin.org/t/epoch-boundary-validator-shuffle/343
-status: Draft
+status: Review
 created: 2024-10-29
 ---
 
@@ -232,14 +232,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ## Rationale
 
-<!--
-  The rationale fleshes out the specification by describing what motivated the design and why particular design decisions were made. It should describe alternate designs that were considered and related work, e.g. how the feature is supported in other protocols. The rationale should discuss important objections or concerns raised during discussion around the TNIP.
-
-  The current placeholder is acceptable for a draft.
-
-  TODO: Remove this comment before submitting
--->
-
 ### Permissionless [NVVs](#non-voting-validators-nvvs)
 
 The network's security is reinforced with permissionless clients that independently execute consensus output. The network should further enhance its security by allowing these nodes, once staked, to perform attestations against [CVV](#committee-voting-validators-cvvs) consensus output. However, this is outside the scope of this proposal.
@@ -304,14 +296,6 @@ N/A
 
 ## Security Considerations
 
-<!--
-  All TNIPs must contain a section that discusses the security implications/considerations relevant to the proposed change. Include information that might be important for security discussions, surfaces risks and can be used throughout the life cycle of the proposal. For example, include security-relevant design decisions, concerns, important discussions, implementation-specific guidance and pitfalls, an outline of threats and risks and how they are being addressed. TNIP submissions missing the "Security Considerations" section will be rejected. A TNIP cannot proceed to status "Final" without a Security Considerations discussion deemed sufficient by the reviewers.
-
-  The current placeholder is acceptable for a draft.
-
-  TODO: Remove this comment before submitting
--->
-
 ### Limited Decentralization (Early Stages)
 
 GSMA full-members hold the exclusive right to validate transactions and participate in consensus. The members are decentralized within the context of Mobile Network Operators (MNOs), but eligible committee members are more limited than other protocols because of this requirement. It is beneficial for the protocol and the network at large for GSMA members to stake and operate multiple nodes. However, it will take time for validator numbers to reach a critical point of diversity where the protocol can tolerate more byzantine nodes without significant consequences.
@@ -325,6 +309,20 @@ Additional consideration is needed to enhance the network's robustness against t
 ### Lazy Validators
 
 Lazy validators might subscribe to a peer's execution results through a public RPC and use the data as their own, as if they computed the output individually. Right now, there is some level of trust that validators won't be lazy and skip execution. Stake and knowledge is a reasonable deterrent in the early stages, but more work is needed to remove this trust assumption as the network grows larger. One idea is to have staked [NVVs](#non-voting-validators-nvvs) randomly sample [CVV](#committee-voting-validators-cvvs) execution results throughout each epoch, but that is outside the scope of this proposal.
+
+### Randomness
+
+Unpredictable values are critical for maintining the integrity and security of the chain.
+Randomness is obtained through BLS aggregate signatures from the leader certificate for a round and mixed with the accumulated randomness from the previous consensus output.
+
+The random bytes generated from aggregate BLS signatures are theoretically impossible to predict and easy to verify.
+
+As certificates are issued, it's possible for a bad actor to look ahead and anticipate the future accumulated random value by considering all possible certificates as leaders.
+However, such a maneuver doesn't yield any advantage because the signatures are already accumulated.
+
+In order for an adversary to take advantage of knowing the random value, they would need to influence the aggregate signature bytes themselves.
+If an adversary were able to affect the outcome of the aggregate signature or predict its value, they could take action before the signature is generated to manipulate events in their favor.
+This is largely understood to be impossible as long as private keys remain private.
 
 ## Copyright
 
