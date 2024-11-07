@@ -7,7 +7,7 @@ status: Draft
 created: 2024-10-29
 ---
 
-# Epochs with New Committees
+# Rotating Committees
 
 ## Abstract
 
@@ -22,9 +22,6 @@ In Ethereum, validators are randomly shuffled into different committees responsi
 Introducing a process to rotate eligible validators provides fresh opportunities for new nodes to participate in consensus as voting committee members. Randomly shuffling validators underpins both network security and community growth, aligning with the broader goals of decentralized security and equitable participation.
 
 ## Specification
-##### Handshake
-
-The handshake is permissionless. [NVVs](#non-voting-validators-nvvs) initiate contact with known validators to subscribe to the latest consensus. The handshake involves exchanging network information to establish peer connections.
 
 ### Committees
 
@@ -40,7 +37,8 @@ Validators that track and execute consensus but do not vote for every block in t
 
 ##### On-chain Committee Information
 
-Committee information is stored on-chain to support client verification. The “Consensus Registry” contract is located at 0x467Bccd9d29f223BcE8043b84E8C8B282827790F and includes the following committee types:
+Committee information is stored on-chain to support client verification.
+The “Consensus Registry” contract is located at `0x07e17e17e17e17e17e17e17e17e17e17e17e17e1` and includes the following committee types:
 
 * C: The current committee which votes to reach consensus and extend the canonical tip.
 * C<sub>p</sub>: The committee from the previous epoch.
@@ -53,9 +51,10 @@ At each epoch boundary, the outgoing committee signs and broadcasts the last sea
 
 ### Epochs
 
-An epoch is defined as a 24-hour time period. The transition is triggered by the first commit to the consensus Directed Acyclic Graph (DAG) after the 24-hour interval.
+An epoch is defined as a 24-hour time period.
+The transition is triggered by the first commit to the consensus Directed Acyclic Graph (DAG) after the 24-hour interval.
 
-##### Epoch Boundary (*e*)
+#### Epoch Boundary (*e*)
 
 The last round of consensus committed to the DAG within an epoch, serving as the trigger for the next committee to advance. The timestamp for e must be greater-than or equal-to the 24-hour interval, but it cannot exceed 30 seconds past.
 
@@ -67,21 +66,20 @@ The last round of consensus committed to the DAG within an epoch, serving as the
 
 NOTE: The timestamp for *e<sub>r</sub>* must be within [*e<sub>t</sub>* , *e<sub>t</sub>* + *e<sub>m</sub>*).
 
-##### Signed Execution Result
-
-The sealed header of the last block produced while executing *e<sub>r</sub>*. The header's hash is signed by the node’s BLS12-381 private key. The signed execution result includes the sealed header and the signed hash of the sealed header. Peers verify signed execution results by taking the SHA-256 hash of the header and comparing it to the signature.
-
-#### Recovering from failed execution at *e*
-
-Byzantine nodes must not prevent the network from closing an epoch or a new committee from taking over consensus. If the (pending) current committee C fails to receive a quorum of signed execution results at *e* to start the epoch, then the certified block in the last DAG commit is used to start the epoch. The new committee C must use this leader certificate’s aggregate signatures to generate C<sub>n+1</sub> since the closing committee failed to propose this committee. Nodes must be penalized in the first round of the new epoch by slashing stake if they failed to attest the epoch boundary. The penalty must be applied in addition to the node’s other opening epoch responsibilities. The amount of stake to deduct from the validator’s staked balance will be determined through social governance.
-
 #### Closing Epoch Responsibilities
 
 [CVVs](#committee-voting-validators-cvvs) must perform closing epoch responsibilities to facilitate a successful transfer of consensus voting privileges to the next committee.
 
+##### Signed Execution Result
+
+The sealed header of the last block produced while executing *e<sub>r</sub>*. The header's hash is signed by the node’s BLS12-381 private key. The signed execution result includes the sealed header and the signed hash of the sealed header. Peers verify signed execution results by taking the SHA-256 hash of the header and comparing it to the signature.
+
 ##### Executing the last output
 
-[CVVs](#committee-voting-validators-cvvs) reach consensus and commit rounds to a local DAG until a certain UNIX timestamp is reached (et). Once e<sub>t</sub> is reached, [CVVs](#committee-voting-validators-cvvs) have up to 60 seconds (or enough time to ensure execution attempt, even if extra rounds needed for commit) to commit a leader and execute the output from consensus. While executing the last output, [CVVs](#committee-voting-validators-cvvs) must update the consensus registry contract with committee’s updates using a system call to `concludeEpoch` on the consensus registry contract at 0x0111  The required committee updates are:
+[CVVs](#committee-voting-validators-cvvs) reach consensus and commit rounds to a local DAG until a certain UNIX timestamp is reached (et).
+Once e<sub>t</sub> is reached, [CVVs](#committee-voting-validators-cvvs) have up to 60 seconds (or enough time to ensure execution attempt, even if extra rounds needed for commit) to commit a leader and execute the output from consensus.
+While executing the last output, [CVVs](#committee-voting-validators-cvvs) must update the consensus registry contract with committee’s updates using a system call to `concludeEpoch` on the consensus registry contract at `0x07e17e17e17e17e17e17e17e17e17e17e17e17e1`.
+The required committee updates are:
 
 1. The current committee must become the previous committee.
 
@@ -99,11 +97,12 @@ Byzantine nodes must not prevent the network from closing an epoch or a new comm
 
 <p style="text-align:center;">C<sub>n+1</sub> = new committee from a deterministic shuffle</p>
 
-The final execution result is signed by the validator’s BLS12-381 private key and unreliably broadcast to all known validators ([CVVs](#committee-voting-validators-cvvs) and [NVVs](#non-voting-validators-nvvs)).
+The final execution result is signed by the validator’s BLS12-381 private key and unreliably broadcast to all known validators ([CVVs](#committee-voting-validators-cvvs) and [NVVs](#non-voting-validators-nvvs)) through the gossip network.
 
-> TODO: should the signed result be reliably broadcast to the next committee?
-
-[NVVs](#non-voting-validators-nvvs) must also sign and vote on execution results at *e*. All validators continue to gossip signed execution results at *e* until the committee taking over for the next epoch (updated [C](#on-chain-committee-information)) reaches a quorum of signatures (2f+1) from all eligible validators. These votes comprise a quorum from all staked validator nodes on the network, completing the epoch. Pending [CVVs](#committee-voting-validators-cvvs) reliably forward all signed execution results to other committee members to support a successful transition.
+[NVVs](#non-voting-validators-nvvs) must also sign and vote on execution results at *e*.
+All validators continue to gossip signed execution results at *e* until the committee taking over for the next epoch (updated [C](#on-chain-committee-information)) reaches a quorum of signatures (2f+1) from all eligible validators.
+These votes comprise a quorum from all staked validator nodes on the network, completing the epoch.
+Pending [CVVs](#committee-voting-validators-cvvs) reliably forward all signed execution results to their fellow committee members to support a successful transition.
 
 ##### Shuffle Mechanism
 
@@ -119,17 +118,30 @@ On the happy path, this seems more efficient. The network already spent computat
 
 Network latency could cause issues if a certificate is delayed or never committed to the DAG.
 
+#### Recovering from failed execution at *e*
+
+Byzantine nodes must not prevent the network from closing an epoch or a new committee from taking over consensus.
+If the (pending) current committee C fails to receive a quorum of signed execution results at *e* to start the epoch, then the certified block in the last DAG commit is used to start the epoch.
+The new committee C must use this leader certificate’s aggregate signatures to generate C<sub>n+1</sub> since the closing committee failed to propose this committee.
+Nodes must be penalized in the first round of the new epoch by slashing stake if they failed to attest the epoch boundary.
+The penalty must be applied in addition to the node’s other opening epoch responsibilities.
+The amount of stake to deduct from the validator’s staked balance will be determined through social governance.
+
 #### Beginning a new epoch
 
 [CVVs](#committee-voting-validators-cvvs) must perform opening epoch responsibilities to facilitate a successful beginning to the new epoch.
 
 ##### Epoch genesis
 
-Epochs are conceptually new chains that begin with the closing state from the previous epoch. The pending committee C collects signed execution results for the last block of the last executed round of consensus until a quorum of all eligible validator nodes is reached (2f+1) or time expires after e<sub>m</sub>, whichever happens first.
+Epochs are conceptually new chains that begin with the closing state from the previous epoch.
+The pending committee C collects signed execution results for the last block of the last executed round of consensus until a quorum of all eligible validator nodes is reached (2f+1) or time expires after e<sub>m</sub>, whichever happens first.
 
-The first round committed to the DAG must apply rewards and penalties for the previous epoch for all validators through a system call to the staking contract at 0x467Bccd9d29f223BcE8043b84E8C8B282827790F.
+The first round committed to the DAG must apply rewards and penalties for the previous epoch for all validators through a system call to the staking contract at `0x07e17e17e17e17e17e17e17e17e17e17e17e17e1`.
+The method on the staking contract is `applyIncentives`.
 
-#### Recovering from different execution results at genesis
+Protocol implementation must include a new RPC endpoint called `tn_epochGenesis` that returns the quorum of signatures and the sealed header of the execution result used by the current committee to start the current epoch.
+
+##### Recovering from different execution results at genesis
 
 Because the asynchronous nature of the protocol could cause some nodes to miss the signed execution result at *e*, [CVVs](#committee-voting-validators-cvvs) must verify signatures and use the latest, signed, canonical tip in the event that the proposed genesis certificates include different execution results. Consider the scenario that some nodes have the correct signed execution result and others used the fallback tip because they did not receive a quorum of votes in time. This could happen if e<sub>m</sub> expires while a node has only broadcast its signed execution results to some of its peers.
 
@@ -139,44 +151,51 @@ This ensures that the closing executing result from the previous epoch will star
 
 #### Preparing for the next epoch
 
-Validators that are in the next committee (C<sub>n</sub>) must update their peer lists to include all future committee members by making a request on the gossipsub peer network for peers matching the peer's BLS12-381 public keys. Nodes should drop peers in preference of their future committee members to ensure they have network information for all committee members by the start of the next epoch.
+Validators that are in the next committee (C<sub>n</sub>) must update their peer lists to include all future committee members by making a request on the gossipsub peer network for peers matching the peer's BLS12-381 public keys.
+Nodes should drop peers in preference of their future committee members to ensure they have network information for all committee members by the start of the next epoch.
 
-TODO: would a published information be better? Push vs Pull
+### Eligible Nodes
 
-### Becoming an Eligible Validator
+Telcoin Network is a proof-of-stake network (PoS) that requires proof of authority to stake.
+Authorities are GSMA full-members.
 
-Telcoin Network is a proof-of-stake network (PoS) run by ?????????
+#### Syncing
 
-##### Staking Contract
+New nodes synchronize by downloading all consensus output and executing the data up to the current epoch.
+The Telcoin Association's TAO manages snapshots of execution and consensus data to facilitate this process.
+Syncing must be permissionless and verifiable through independent execution.
 
-Validators must stake 1 million TEL to the designated staking contract at `0x467Bccd9d29f223BcE8043b84E8C8B282827790F`. The locking period for stake is 10 epochs, after which a validator may withdraw their funds and exit the protocol entirely.
+#### Staking Contract
 
-##### NFT Requirement
+Validators must stake 1 million TEL to the designated staking contract at `0x07e17e17e17e17e17e17e17e17e17e17e17e17e1`. The locking period for stake is 10 epochs, after which a validator may withdraw their funds and exit the protocol entirely.
+
+#### NFT Requirement
 
 Validator wallets require an NFT issued by Telcoin Association for staking. The NFT issuance process involves a human, real-world review by the Telcoin Association and is exclusive to GSMA members.
 
-Validators must first obtain an NFT through Telcoin Association’s decentralized governance and have a fully synced node online. The validator NFT allows wallets to deposit TEL to the staking contract located at `0x467Bccd9d29f223BcE8043b84E8C8B282827790F`.
+Validators must first obtain an NFT through Telcoin Association’s decentralized governance and have a fully synced node online. The validator NFT allows wallets to deposit TEL to the staking contract located at `0x07e17e17e17e17e17e17e17e17e17e17e17e17e1`.
 
 Once a node has completed the [staking process](#staking-contract), the validator's status is updated to "active" after one full epoch. Once the validator status is "active" on-chain, it is eligible to become a [CVV](#committee-voting-validators-cvvs). The newly eligible validator will be included in the next shuffle that determines C<sub>n+1</sub>. The node's effective stake is considered during the shuffle process.
 
-The node initiates the handshake protocol with an existing node. The initial handshake from a new node attempting to join the consensus network includes the following information:
+#### Network Discovery
+
+Validators must support a trustless and permissionless exchange of peer information.
+[CVVs](#committee-voting-validators-cvvs) need to know the ports and IP addresses of all other [CVVs](#committee-voting-validators-cvvs) in order to effectively participate in consensus.
+However, publicly exposing this information introduces attack vectors for DOS attacks.
+
+The public RPC must add a new endpoint called `tn_validatorHandshake` that verifies and acknowledges new peers that have staked TEL and joined the network.
+
+[NVVs](#non-voting-validators-nvvs) initiate contact with known validators through their RPC endpoints, allowing them to subscribe to the latest consensus.
+The node initiates a "handshake" protocol with an existing node.
+The initial handshake from a new node attempting to join the consensus network includes the following information:
 
 * Primary network address
 * Worker network address
 * BLS12-381 signature of the ECDSA secp256k1 public key used to stake
 * The chain id of the network the node is trying to join
 
-Protocol implementations should support node operators to manually specify an IP address to initiate the handshake. Well-known beacons must be supported by the Telcoin Autonomous Operations (TAO) to facilitate peer discovery.
-
-##### Syncing
-
-New nodes synchronize by downloading all consensus output and executing the data up to the current epoch. The Telcoin Association's TAO manages snapshots of execution and consensus data to facilitate this process.
-
-##### Handshake
-
-Validators must support a trustless exchange of peer information. [CVVs](#committee-voting-validators-cvvs) need to know the ports and IP addresses of all other [CVVs](#committee-voting-validators-cvvs) in order to effectively participate in consensus. However, publicly exposing this information introduces attack vectors for DOS attacks.
-
-The public RPC must add a new endpoint called `tn_validatorHandshake` that verifies and acknowledges new peers that have staked TEL and joined the network.
+Protocol implementations should support node operators to manually specify an IP address to initiate the handshake.
+Well-known beacons must be supported by the Telcoin Autonomous Operations (TAO) to facilitate peer discovery.
 
 ##### “Friendly” network
 
@@ -186,11 +205,7 @@ If a node needs to update network information, it must initiate another handshak
 
 In the early stages, the core protocol team is responsible for assisting node operators joining the network. Eventually, the protocol will be open-source so anyone can run a node and execute consensus output. Only GSMA full members are eligible to become [CVVs](#committee-voting-validators-cvvs).
 
-##### Publicly available epoch genesis
-
-Protocol implementation must include a new RPC endpoint called `tn_epochGenesis` that returns the quorum of signatures and the sealed header of the execution result used by the current committee to start the current epoch.
-
-##### Transition from [NVV](#non-voting-validators-nvvs) to [CVV](#committee-voting-validators-cvvs)
+#### Transition from [NVV](#non-voting-validators-nvvs) to [CVV](#committee-voting-validators-cvvs)
 
 [NVVs](#non-voting-validators-nvvs) become eligible to transition to [CVVs](#committee-voting-validators-cvvs) after participating for one full epoch. The epoch boundary marks the transition, with validators signing and broadcasting their final execution results to form a new committee based on a quorum of signatures.
 
@@ -232,9 +247,26 @@ Nodes joining the network must initiate handshakes to exchange network informati
 
 Committee nodes must limit the number and prioritize the type of peers they maintain. Consensus output must be gossipped outside the committee so non-voting clients can track the canonical tip. However, it's critical that [CVVs](#committee-voting-validators-cvvs) prioritize inner-committee communication above all else to ensure consensus is successful.
 
+### Stake
+
+The amount of stake needs to be further evaluated, but is assumed to be sufficient in the early stages of the network.
+Stake is only effective if the amount is substantial enough to economically disincentivize nodes from becoming Byzantine.
+Revenue varies significantly between different tiers of Mobile Network Operators (MNO), so the financial impact could vary between staked nodes.
+Social governance should still play a role in revoking validator NFTs for bad actors on the network if losing stake is insufficient.
+The current target is expected to be a minimum amount of appropriate stake for the lowest tier MNO.
+
+Governance should review and provide feedback on how validators withdraw and exit the network.
+
+### Committees On-Chain
+
+Storing committees on-chain ensures any clients following the canonical tip have the latest committee information.
+Validating execution results ensures consensus is reached for committee selections.
+Previous committee information supports clients trying to sync.
+Selecting committees in advance allows the protocol to ensure stable withdrawals for validators exiting the network.
+
 ### Reliable Broadcast??
 
-Reliable broadcast is unnecessary at *e* with a robust gossip network.
+Reliable broadcast is unnecessary at *e* with a robust gossip network. All nodes gossip signed execution results to support a successful committee transition.
 
 ### Fallback at *e*
 
