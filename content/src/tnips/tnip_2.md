@@ -274,11 +274,21 @@ Validating execution results ensures consensus is reached for committee selectio
 Previous committee information supports clients trying to sync.
 Selecting committees in advance allows the protocol to ensure stable withdrawals for validators exiting the network.
 
+### Closing Epochs
+
+Considerable effort, measured in both computation and network bandwidth, is used to reach consensus for batches of transactions.
+
+The protocol could enforce a strict cutoff without any delay to close the epoch, but any certificates containing batches cannot be considered certified by the next committee.
+All certified transactions would need to be forwarded to a new [CVV](#committee-voting-validators-cvvs), reproposed, reverified, and resequenced by the new committee.
+
+Instead, a best effort is made to reduce waste and execute any transactions that were included in certificates by C.
+Primaries still propose headers to advance the round, but empty headers utilize much less resources.
+
+Specifying a timeout ensures the protocol advances, even in the event of a faulty leader or asynchronous network conditions.
+
 ### Gossip vs Reliable Broadcasting Execution Results at *e*
 
 Reliable broadcast is unnecessary at *e* with a robust gossip network. All nodes gossip signed execution results to support a successful committee transition.
-
-### Fallback at *e*
 
 ## Backwards Compatibility
 
