@@ -76,9 +76,17 @@ The sealed header of the last block produced while executing *e<sub>r</sub>*. Th
 
 ##### Executing the last output
 
-[CVVs](#committee-voting-validators-cvvs) reach consensus and commit rounds to a local DAG until a certain UNIX timestamp is reached (et).
-Once e<sub>t</sub> is reached, [CVVs](#committee-voting-validators-cvvs) have up to 60 seconds (or enough time to ensure execution attempt, even if extra rounds needed for commit) to commit a leader and execute the output from consensus.
-While executing the last output, [CVVs](#committee-voting-validators-cvvs) must update the consensus registry contract with committee’s updates using a system call to `concludeEpoch` on the consensus registry contract at `0x07e17e17e17e17e17e17e17e17e17e17e17e17e1`.
+[CVVs](#committee-voting-validators-cvvs) reach consensus and commit rounds to a local DAG until a certain UNIX timestamp is reached (e<sub>t</sub>).
+The timestamp comes from consensus and is immutable based on the leader's certificate for the committed subdag.
+
+Once e<sub>t</sub> is reached, [CVVs](#committee-voting-validators-cvvs) stop accepting new transactions and do not propose any more batches.
+Primaries continue proposing headers to advance the round until all of their outstanding certificates with batches are committed to the DAG.
+Once a Primary's these outstanding certificates are committed to the DAG, the primary includes a system message in it's header to `CloseEpoch`.
+Primaries continue to propose headers until a quourm of [CVVs](#committee-voting-validators-cvvs) include `CloseEpoch` in their certificates.
+
+The committee has up to 60 seconds (or enough time to ensure a reasonable attempt to commit all certified blocks) to reach a quorum of `CloseEpoch` system messages.
+The last committed round with a quorum of `CloseEpoch` system messages is *e<sub>r</sub>*.
+While executing *e<sub>r</sub>*, [CVVs](#committee-voting-validators-cvvs) must update the consensus registry contract with committee’s updates using a system call to `concludeEpoch` on the consensus registry contract at `0x07e17e17e17e17e17e17e17e17e17e17e17e17e1`.
 The required committee updates are:
 
 1. The current committee must become the previous committee.
@@ -108,7 +116,7 @@ Pending [CVVs](#committee-voting-validators-cvvs) reliably forward all signed ex
 
 The Fisher-Yates shuffle algorithm is used to randomly reorder validators. This shuffle occurs once per epoch, and uses the aggregate BLS signature from the leader certificate from the last committed consensus round mixed with the accumulated randomness during the epoch as the source of entropy.
 
-##### Forwarding transactions that weren’t included
+##### Leftover Certificates
 
 Transactions are executed if they’re included in the consensus DAG commit, so inevitably there will be transactions that were certified within one epoch but unsettled and executed before *e* is reached. The new committee should not rely on a previous committee’s certificates and must reach consensus again before executing any transactions leftover from a previous epoch. To ensure the best possible user experience, exiting [CVVs](#committee-voting-validators-cvvs) must track and reliably forward any remaining transactions to pending [CVVs](#committee-voting-validators-cvvs). [CVVs](#committee-voting-validators-cvvs) in the new epoch must reverify and prioritize these transactions in the early rounds of the new epoch.
 
@@ -125,7 +133,8 @@ If the (pending) current committee C fails to receive a quorum of signed executi
 The new committee C must use this leader certificate’s aggregate signatures to generate C<sub>n+1</sub> since the closing committee failed to propose this committee.
 Nodes must be penalized in the first round of the new epoch by slashing stake if they failed to attest the epoch boundary.
 The penalty must be applied in addition to the node’s other opening epoch responsibilities.
-The amount of stake to deduct from the validator’s staked balance will be determined through social governance.
+The amount of stake to deduct from the validator’s staked balance is yet to be determined.
+Social governance must participate in this decision.
 
 #### Beginning a new epoch
 
@@ -256,6 +265,7 @@ Social governance should still play a role in revoking validator NFTs for bad ac
 The current target is expected to be a minimum amount of appropriate stake for the lowest tier MNO.
 
 Governance should review and provide feedback on how validators withdraw and exit the network.
+Further evaluation is needed to identify appropriate penalties for slashable offenses.
 
 ### Committees On-Chain
 
@@ -264,7 +274,7 @@ Validating execution results ensures consensus is reached for committee selectio
 Previous committee information supports clients trying to sync.
 Selecting committees in advance allows the protocol to ensure stable withdrawals for validators exiting the network.
 
-### Reliable Broadcast??
+### Gossip vs Reliable Broadcasting Execution Results at *e*
 
 Reliable broadcast is unnecessary at *e* with a robust gossip network. All nodes gossip signed execution results to support a successful committee transition.
 
